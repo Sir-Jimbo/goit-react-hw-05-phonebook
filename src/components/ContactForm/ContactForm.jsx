@@ -22,7 +22,6 @@ class ContactForm extends Component {
       e.preventDefault();
 
       this.props.onSubmit(this.state);
-      //We call this function for reset all values in form;
       this.reset();
    }
 
@@ -38,28 +37,25 @@ class ContactForm extends Component {
 
             <label className={s.label}>
                Name
+               </label>
             <input
-                  className={s.input}
-                  type="text"
-                  name="name"
-                  placeholder="enter your name"
-                  value={this.state.name}
-                  onChange={this.handleChange}
-               />
-            </label>
-
-
+               className={s.input}
+               type="text"
+               name="name"
+               placeholder="enter your name"
+               value={this.state.name}
+               onChange={this.handleChange}
+            />
             <label className={s.label}>
                Phone number
+               </label>
             <input
-                  className={s.input}
-                  type="tel"
-                  name="number"
-                  placeholder="enter your number"
-                  value={this.state.number}
-                  onChange={this.handleChange} />
-            </label>
-
+               className={s.input}
+               type="tel"
+               name="number"
+               placeholder="enter your number"
+               value={this.state.number}
+               onChange={this.handleChange} />
             <button className={s.button} type="submit">Add contact</button>
          </form>
       );

@@ -1,15 +1,22 @@
 import React, { Component } from 'react';
+import { CSSTransition } from 'react-transition-group';
 import { v4 as uuidv4 } from 'uuid';
-import Filter from 'components/Filter/Filter'
-import ContactList from 'components/ContactList/ContactList'
-import ContactForm from 'components/ContactForm/ContactForm'
-import s from './PhoneBook.module.css'
+import Filter from 'components/Filter/Filter';
+import ContactList from 'components/ContactList/ContactList';
+import ContactForm from 'components/ContactForm/ContactForm';
+import s from './PhoneBook.module.css';
+import Layout from 'components/Layout/Layout';
+import Section from 'components/Section/Section';
+import Notification from 'components/Notification/Notification';
+
 
 class PhoneBook extends Component {
+
    state = {
       contacts: [],
       filter: '',
-
+      error: false,
+      message: null
    }
 
    componentDidMount() {
@@ -17,32 +24,46 @@ class PhoneBook extends Component {
       const parsedContacts = JSON.parse(contacts);
       if (parsedContacts) {
          this.setState({ contacts: parsedContacts });
-
       }
-
    }
 
    componentDidUpdate(prevProps, prevState) {
       const currentContacts = this.state.contacts;
       if (currentContacts !== prevState.сontacts) {
-         //console.log('Обновились контакты. Зааписываю в хранилище');
          localStorage.setItem('contacts', JSON.stringify(currentContacts));
-
       }
-
    }
 
+   isShowMessage = (error) => {
+      this.setState({ message: error });
+      setTimeout(() => {
+         this.setState({ message: null });
+      }, 2500);
+   }
 
    formSubmitHandler = ({ name, number }) => {
-
       const contact = {
          id: uuidv4(),
          name: name,
          number: number,
       }
-      if (this.state.contacts.find((item) => item.name.toLowerCase() === name.toLowerCase())) {
-         alert(`${name} is already in contacts.`);
-      } else {
+
+      if (name === '') {
+         this.isShowMessage('Enter name, please!');
+         return;
+
+      }
+      if (number === '') {
+         this.isShowMessage('Enter phone, please!');
+         return;
+      }
+
+      if (
+         this.state.contacts.find((item) => item.name.toLowerCase() === name.toLowerCase())) {
+         this.isShowMessage(`${name} is already in contacts.`);
+         return;
+      }
+      else {
          this.setState(({ contacts }) => ({
             contacts: [...contacts, contact]
          }))
@@ -50,11 +71,8 @@ class PhoneBook extends Component {
    }
 
    deleteContact = (contactId) => {
-      console.log(contactId);
       this.setState(prevState => ({
-         contacts: prevState
-            .contacts
-            .filter(contact => contact.id !== contactId),
+         contacts: prevState.contacts.filter(contact => contact.id !== contactId),
       }));
    };
 
@@ -62,13 +80,9 @@ class PhoneBook extends Component {
       this.setState({ filter: e.currentTarget.value })
    }
 
-
    render() {
-
-      const { contacts } = this.state;
-      const { filter } = this.state;
+      const { contacts, filter, message } = this.state;
       const { formSubmitHandler, changeFilter, deleteContact } = this;
-
       const normalizedFilter = this.state.filter.toLowerCase();
       const filterContacts = this
          .state
@@ -78,24 +92,44 @@ class PhoneBook extends Component {
             .toLowerCase()
             .includes(normalizedFilter));
 
-
       return (
-         <div>
-
-            <h1 className={s.title}> Phonebook </h1>
-            <ContactForm onSubmit={formSubmitHandler} />
-            {contacts.length > 0 && (
-               <h2 className={s.title}> Contacts </h2>
-            )}
-            {contacts.length > 0 && (
-               <Filter value={filter} onChange={changeFilter} />
-            )}
-            {contacts.length > 0 && (
-               <ContactList items={filterContacts} onDeleteContact={deleteContact} />
-            )}
-         </div>
+         <Layout>
+            <Section>
+               <CSSTransition
+                  in={message}
+                  timeout={250}
+                  classNames={s}
+                  unmountOnExit
+               >
+                  <Notification
+                     message={message} />
+               </CSSTransition>
+               <ContactForm
+                  onSubmit={formSubmitHandler}
+               />
+               {contacts.length > 1 && (
+                  <Filter
+                     value={filter}
+                     onChange={changeFilter}
+                  />
+               )}
+               <CSSTransition
+                  in={contacts.length > 0}
+                  timeout={250}
+                  classNames={s}
+                  unmountOnExit
+               >
+                  <ContactList
+                     items={filterContacts}
+                     onDeleteContact={deleteContact}
+                  />
+               </CSSTransition>
+            </Section>
+         </Layout>
       );
    }
 }
+
+
 
 export default PhoneBook;

@@ -3,24 +3,41 @@
    flex-direction: column;
    margin: 0 auto;
    padding: 15px 10px;
-   width: 400px;
-   border: 1px solid;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+   border-radius: 4px;
 }
 .label {
    display: block;
-   margin-bottom: 15px;
+   font-weight: 500;
 }
 
 .input {
    display: block;
+   margin: 0;
    margin-top: 5px;
+   margin-bottom: 15px;
+   padding: 10px;
+   border: 2px solid grey;
+   border-radius: 4px;
+}
+
+.input:focus {
+   outline: none;
+   border-color: #2a3693;
 }
 
 .button {
-   width: 100px;
+   padding: 10px;
+   background-color: #2a3693;
+   color: #ffffff;
+   border: none;
+   border-radius: 4px;
 }
-.button:hover,
-.button:focus {
+.button:hover {
    cursor: pointer;
    background-color: #4b89ee;
+}
+
+.button:visited {
+   background-color: #2a3693;
 }
